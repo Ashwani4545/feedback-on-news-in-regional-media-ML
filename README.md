@@ -151,7 +151,7 @@ python -m app.twitter_etl --query "#BanarasNews -is:retweet lang:en"
 
 ---
 
-# 📊 Open Streamlit Dashboard
+📊 Open Streamlit Dashboard
 
 streamlit run dashboard/streamlit_app.py
 Dashboard URL → http://localhost:8501
@@ -162,7 +162,7 @@ You can:
 
 ---
 
-# 🐳 Docker Setup (Optional)
+🐳 Docker Setup (Optional)
 
 If you prefer running everything in containers:
 docker-compose up --build
@@ -172,7 +172,7 @@ This will launch:
 
 ---
 
-# 🧪 Run Tests
+🧪 Run Tests
 
 pytest -q
 Expected:
