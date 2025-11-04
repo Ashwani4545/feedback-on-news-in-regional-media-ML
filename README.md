@@ -47,26 +47,45 @@ Deployment Docker, Docker Compose
 
 ---
 
-🧩 Folder Structure
+# 🧩 Folder Structure
+
 regional_feedback_full/
 │
+
 ├── app/
+
 │ ├── main.py # Flask API server
+
 │ ├── twitter_etl.py # Fetch feedback from Twitter/X
+
 │ ├── analysis.py # NLP-based sentiment and correction detection
+
 │ ├── database.py # SQLAlchemy models and DB initialization
+
 │
+
 ├── dashboard/
+
 │ └── streamlit_app.py # Streamlit dashboard
+
 │
+
 ├── tests/ # Unit tests
+
 │
+
 ├── .github/workflows/ci.yml # GitHub Actions workflow
+
 ├── docker-compose.yml # Multi-service (API + dashboard)
+
 ├── Dockerfile
+
 ├── requirements.txt
+
 ├── .env.example
+
 ├── LICENSE
+
 └── README.md
 
 ---
