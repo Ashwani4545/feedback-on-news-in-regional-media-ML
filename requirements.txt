@@ -1,0 +1,9 @@
+Flask
+SQLAlchemy
+requests
+streamlit
+nltk
+scikit-learn
+pandas
+python-dotenv
+pytest
