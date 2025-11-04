@@ -135,8 +135,6 @@ API_PORT=8000
 # 🗃️ Database Initialization
 
 python -m app.database
-Expected output:
-DB initialized
 
 ---
 
@@ -175,8 +173,6 @@ This will launch:
 🧪 Run Tests
 
 pytest -q
-Expected:
-1 passed in 0.2s
 
 ---
 
