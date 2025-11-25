@@ -1,4 +1,4 @@
-# 📘 README.md — Regional Newsroom Feedback System (AI + Twitter/X Integration)
+# 📘 Regional Newsroom Feedback System (AI + Twitter/X Integration)
 
 ---
 
