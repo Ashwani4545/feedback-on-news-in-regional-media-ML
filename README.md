@@ -161,7 +161,7 @@ curl -X POST http://localhost:8000/ingest_manual \
 ```
 ---
 
-# 🧾 Future Enhancements
+## 🧾 Future Enhancements
 ```
 • Advanced topic classification (TF-IDF + Logistic Regression)
 • Multi-channel integration (YouTube, Facebook)
