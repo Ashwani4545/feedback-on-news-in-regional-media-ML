@@ -148,9 +148,9 @@ This will launch:
 ---
 
 # 🧪 Run Tests
-
+```
 pytest -q
-
+```
 ---
 
 # 🧠 Example API Request
