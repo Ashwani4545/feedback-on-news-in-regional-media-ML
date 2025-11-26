@@ -171,6 +171,6 @@ curl -X POST http://localhost:8000/ingest_manual \
 ---
 
 ## 🧑‍💻 Maintainer
-
+```
 Developed by: Ashwani Pandey
 Tech Stack: Python · Flask · SQLAlchemy · Streamlit · Docker · Twitter API
