@@ -28,7 +28,7 @@ The system automatically:
 ---
 
 # 🧰 Tech Stack
-
+```
 Layer Technology
 
 Backend Python (Flask)
@@ -44,7 +44,7 @@ External APIs Twitter/X API v2
 CI/CD GitHub Actions
 
 Deployment Docker, Docker Compose
-
+```
 ---
 
 # 🧩 Folder Structure
