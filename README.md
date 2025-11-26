@@ -6,7 +6,7 @@
 
 This project aims to analyze audience feedback for regional news outlets using AI/ML techniques.
 It collects audience reactions from multiple channels — especially Twitter/X — and generates actionable insights to improve content relevance, credibility, and community trust.
-
+```
 The system automatically:
 • Fetches tweets via Twitter/X API (v2)
 • Analyzes sentiment, urgency, and correction indicators using NLP
