@@ -153,7 +153,7 @@ pytest -q
 ```
 ---
 
-# 🧠 Example API Request
+## 🧠 Example API Request
 ```
 curl -X POST http://localhost:8000/ingest_manual \
  -H "Content-Type: application/json" \
