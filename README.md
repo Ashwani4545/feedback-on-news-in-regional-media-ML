@@ -138,13 +138,13 @@ You can:
 ---
 
 # 🐳 Docker Setup (Optional)
-
+```
 If you prefer running everything in containers:
 docker-compose up --build
 This will launch:
 • Flask API: http://localhost:8000
 • Streamlit Dashboard: http://localhost:8501
-
+```
 ---
 
 # 🧪 Run Tests
