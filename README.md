@@ -2,7 +2,7 @@
 
 ---
 
-# 📰 Overview
+## 📰 Overview
 
 This project aims to analyze audience feedback for regional news outlets using AI/ML techniques.
 It collects audience reactions from multiple channels — especially Twitter/X — and generates actionable insights to improve content relevance, credibility, and community trust.
