@@ -16,7 +16,7 @@ The system automatically:
 ---
 
 # ⚙️ Features
-
+```
 ✅ Collect regional news feedback via Twitter/X APIs
 ✅ Store structured feedback using SQLAlchemy + SQLite
 ✅ Perform sentiment & urgency analysis (VADER NLP)
@@ -24,7 +24,7 @@ The system automatically:
 ✅ Streamlit dashboard for visualization
 ✅ Optional Dockerized environment
 ✅ CI-ready with GitHub Actions
-
+```
 ---
 
 # 🧰 Tech Stack
