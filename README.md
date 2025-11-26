@@ -89,11 +89,11 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-
 3️⃣ Install Dependencies
 
 pip install -r requirements.txt
 ```
+
 4️⃣ Configure Environment Variables
 
 Copy and edit the .env file:
