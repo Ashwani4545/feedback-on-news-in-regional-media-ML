@@ -71,7 +71,7 @@ regional_feedback_full/
 └── README.md
 ```
 ---
-
+```
 # 🧱 Environment Setup
 
 1️⃣ Clone or Unzip Project
@@ -111,7 +111,7 @@ TWITTER_BEARER_TOKEN=your_actual_twitter_api_bearer_token
 DATABASE_URL=sqlite:///./data/feedback.db
 
 API_PORT=8000
-
+```
 ---
 
 # 🗃️ Database Initialization
