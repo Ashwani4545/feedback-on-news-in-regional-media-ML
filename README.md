@@ -27,7 +27,7 @@ The system automatically:
 ```
 ---
 
-# 🧰 Tech Stack
+## 🧰 Tech Stack
 ```
 Layer Technology
 
