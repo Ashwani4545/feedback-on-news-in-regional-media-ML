@@ -137,7 +137,7 @@ You can:
 ```
 ---
 
-🐳 Docker Setup (Optional)
+# 🐳 Docker Setup (Optional)
 
 If you prefer running everything in containers:
 docker-compose up --build
