@@ -106,10 +106,10 @@ API_PORT=8000
 ---
 
 # 🗃️ Database Initialization
-
+```
 python -m app.database
 
----
+```
 
 # 🚀 Run the Application
 
