@@ -1,9 +1,7 @@
 # 📘 Regional Newsroom Feedback System (AI + Twitter/X Integration)
 
 ---
-
 ## 📰 Overview
-
 This project aims to analyze audience feedback for regional news outlets using AI/ML techniques.
 It collects audience reactions from multiple channels — especially Twitter/X — and generates actionable insights to improve content relevance, credibility, and community trust.
 ```
@@ -14,9 +12,7 @@ The system automatically:
 • Displays insights through an interactive Streamlit dashboard
 ```
 ---
-
 ## ⚙️ Features
-
 ```
 ✅ Collect regional news feedback via Twitter/X APIs
 ✅ Store structured feedback using SQLAlchemy + SQLite
