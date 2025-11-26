@@ -111,7 +111,7 @@ python -m app.database
 
 ```
 
-# 🚀 Run the Application
+## 🚀 Run the Application
 
 ▶️ Run Flask API
 ```
