@@ -114,8 +114,11 @@ python -m app.database
 # 🚀 Run the Application
 
 ▶️ Run Flask API
+```
 python -m app.main
 Access it at: http://localhost:8000
+```
+
 ▶️ Fetch Tweets from Twitter/X
 Open another terminal and run:
 python -m app.twitter_etl --query "#BanarasNews -is:retweet lang:en"
