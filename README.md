@@ -78,7 +78,7 @@ regional_feedback_full/
 unzip regional_feedback_full.zip
 cd regional_feedback_full
 ```
-
+```
 2️⃣ Create Virtual Environment
 
 Windows:
@@ -92,11 +92,13 @@ macOS / Linux:
 python3 -m venv venv
 
 source venv/bin/activate
+```
 
+```
 3️⃣ Install Dependencies
 
 pip install -r requirements.txt
-
+```
 4️⃣ Configure Environment Variables
 
 Copy and edit the .env file:
