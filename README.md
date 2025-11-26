@@ -95,17 +95,12 @@ pip install -r requirements.txt
 ```
 
 4️⃣ Configure Environment Variables
-
+```
 Copy and edit the .env file:
-
 cp .env.example .env
-
 Then open .env and set your credentials:
-
 TWITTER_BEARER_TOKEN=your_actual_twitter_api_bearer_token
-
 DATABASE_URL=sqlite:///./data/feedback.db
-
 API_PORT=8000
 ```
 ---
