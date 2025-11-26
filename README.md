@@ -71,16 +71,16 @@ regional_feedback_full/
 └── README.md
 ```
 ---
-```
 # 🧱 Environment Setup
-```
+
 1️⃣ Clone or Unzip Project
+```
 unzip regional_feedback_full.zip
 cd regional_feedback_full
 ```
-```
-2️⃣ Create Virtual Environment
 
+2️⃣ Create Virtual Environment
+```
 Windows:
 
 python -m venv venv
@@ -94,7 +94,7 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-```
+
 3️⃣ Install Dependencies
 
 pip install -r requirements.txt
