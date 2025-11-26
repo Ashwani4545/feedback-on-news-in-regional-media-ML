@@ -126,7 +126,7 @@ python -m app.twitter_etl --query "#BanarasNews -is:retweet lang:en"
 ```
 ---
 
-# 📊 Open Streamlit Dashboard
+## 📊 Open Streamlit Dashboard
 ```
 streamlit run dashboard/streamlit_app.py
 Dashboard URL → http://localhost:8501
