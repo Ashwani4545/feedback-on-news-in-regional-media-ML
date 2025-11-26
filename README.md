@@ -147,7 +147,7 @@ This will launch:
 ```
 ---
 
-# 🧪 Run Tests
+## 🧪 Run Tests
 ```
 pytest -q
 ```
