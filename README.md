@@ -73,12 +73,11 @@ regional_feedback_full/
 ---
 ```
 # 🧱 Environment Setup
-
+```
 1️⃣ Clone or Unzip Project
-
 unzip regional_feedback_full.zip
-
 cd regional_feedback_full
+```
 
 2️⃣ Create Virtual Environment
 
