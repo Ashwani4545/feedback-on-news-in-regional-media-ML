@@ -22,7 +22,9 @@ The system automatically:
 ✅ RESTful Flask backend APIs
 
 ✅ Streamlit dashboard for visualization
+
 ✅ Optional Dockerized environment
+
 ✅ CI-ready with GitHub Actions
 
 ---
