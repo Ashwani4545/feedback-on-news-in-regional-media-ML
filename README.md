@@ -131,7 +131,6 @@ You can:
 • Inspect sentiment analysis results
 • Track new audience reactions
 ```
----
 
 ## 🐳 Docker Setup (Optional)
 ```
@@ -141,13 +140,12 @@ This will launch:
 • Flask API: http://localhost:8000
 • Streamlit Dashboard: http://localhost:8501
 ```
----
 
 ## 🧪 Run Tests
 ```
 pytest -q
 ```
----
+
 
 ## 🧠 Example API Request
 ```
@@ -155,7 +153,6 @@ curl -X POST http://localhost:8000/ingest_manual \
  -H "Content-Type: application/json" \
  -d '{"raw_text": "Please correct the statistics in today’s report", "channel": "email"}'
 ```
----
 
 ## 🧾 Future Enhancements
 
@@ -167,7 +164,6 @@ curl -X POST http://localhost:8000/ingest_manual \
 
 • Data visualization enhancements (word clouds, timelines)
 
----
 
 ## 🧑‍💻 Maintainer
 ```
