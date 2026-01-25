@@ -12,7 +12,7 @@ The system automatically:
 
 ---
 ## ⚙️ Features
-```
+
 ✅ Collect regional news feedback via Twitter/X APIs
 ✅ Store structured feedback using SQLAlchemy + SQLite
 ✅ Perform sentiment & urgency analysis (VADER NLP)
