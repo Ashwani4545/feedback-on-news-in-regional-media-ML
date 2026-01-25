@@ -10,7 +10,6 @@ The system automatically:
 • Stores and manages data in a structured SQL database
 • Displays insights through an interactive Streamlit dashboard
 
----
 ## ⚙️ Features
 
 ✅ Collect regional news feedback via Twitter/X APIs
