@@ -20,7 +20,7 @@ The system automatically:
 ✅ Streamlit dashboard for visualization
 ✅ Optional Dockerized environment
 ✅ CI-ready with GitHub Actions
-```
+
 ---
 
 ## 🧰 Tech Stack
