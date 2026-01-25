@@ -45,7 +45,6 @@ CI/CD GitHub Actions
 
 Deployment Docker, Docker Compose
 ```
----
 
 ## 🧩 Folder Structure
 ```
