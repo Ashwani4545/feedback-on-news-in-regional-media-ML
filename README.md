@@ -26,8 +26,6 @@ The system automatically:
 
 ✅ CI-ready with GitHub Actions
 
----
-
 ## 🧰 Tech Stack
 
 ```
