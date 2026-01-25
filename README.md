@@ -18,6 +18,7 @@ The system automatically:
 ✅ Store structured feedback using SQLAlchemy + SQLite
 
 ✅ Perform sentiment & urgency analysis (VADER NLP)
+
 ✅ RESTful Flask backend APIs
 ✅ Streamlit dashboard for visualization
 ✅ Optional Dockerized environment
