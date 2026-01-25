@@ -167,6 +167,7 @@ curl -X POST http://localhost:8000/ingest_manual \
 ## 🧾 Future Enhancements
 
 • Advanced topic classification (TF-IDF + Logistic Regression)
+
 • Multi-channel integration (YouTube, Facebook)
 • Role-based authentication for newsroom staff
 • Data visualization enhancements (word clouds, timelines)
