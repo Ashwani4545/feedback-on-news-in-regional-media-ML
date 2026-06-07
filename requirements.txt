@@ -1,9 +1,41 @@
-Flask
-SQLAlchemy
-requests
-streamlit
-nltk
-scikit-learn
-pandas
-python-dotenv
-pytest
+# Core API
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.1
+
+# Auth & rate limiting
+python-jose[cryptography]==3.3.0
+slowapi==0.1.9
+
+# Database
+SQLAlchemy==2.0.30
+
+# HTTP
+requests==2.32.2
+
+# NLP — Tier 1 (always installed)
+nltk==3.8.1
+
+# NLP — Tier 2 (transformer, optional — set USE_TRANSFORMER=true)
+# Uncomment to enable:
+# transformers==4.41.2
+# torch==2.3.0
+
+# NLP — Language detection
+langdetect==1.0.9
+
+# Dashboard
+streamlit==1.35.0
+altair==5.3.0
+pandas==2.2.2
+
+# Data science
+scikit-learn==1.5.0
+
+# Dev / test
+pytest==8.2.2
+pytest-cov==5.0.0
+httpx==0.27.0          # needed by FastAPI TestClient
+
+# Config
+python-dotenv==1.0.1
