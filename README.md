@@ -1,172 +1,223 @@
-# 📘 Regional Newsroom Feedback System (AI + Twitter/X Integration)
+# 📰 Regional Newsroom Feedback System v2.0
 
-## 📰 Overview
-This project aims to analyze audience feedback for regional news outlets using AI/ML techniques.
-It collects audience reactions from multiple channels — especially Twitter/X — and generates actionable insights to improve content relevance, credibility, and community trust.
+[![CI](https://github.com/Ashwani4545/regional-newsroom-feedback/actions/workflows/ci.yml/badge.svg)](https://github.com/Ashwani4545/regional-newsroom-feedback/actions)
+[![Python](https://img.shields.io/badge/python-3.11-blue)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)](https://fastapi.tiangolo.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-The system automatically:
-• Fetches tweets via Twitter/X API (v2)
-• Analyzes sentiment, urgency, and correction indicators using NLP
-• Stores and manages data in a structured SQL database
-• Displays insights through an interactive Streamlit dashboard
+AI-powered audience feedback analytics platform built specifically for **regional newsrooms**. Collects reader reactions from multiple channels, detects factual correction requests, computes an Audience Trust Score, and surfaces urgent items for editorial action — all in a purpose-built dashboard.
+
+---
+
+## 🎯 Why this exists
+
+Enterprise social-listening tools (Meltwater, Brandwatch, Talkwalker) cost $6,000–$150,000/year — unaffordable for regional and vernacular outlets. Open-source alternatives are generic NLP notebooks with no newsroom context. This project fills the gap:
+
+| Capability | Enterprise tools | Generic OSS | This project |
+|---|---|---|---|
+| Affordable / self-hostable | ❌ | ✅ | ✅ |
+| Newsroom-specific data model | ❌ | ❌ | ✅ |
+| Correction request detection | ❌ | ❌ | ✅ |
+| Audience Trust Score | ❌ | ❌ | ✅ |
+| Indic language support | ❌ | ❌ | ✅ |
+| Editorial workflow routing | ❌ | ❌ | ✅ (roadmap) |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     Data Sources                        │
+│  Twitter/X API  │  Manual /ingest  │  WhatsApp (soon)  │
+└────────┬───────────────┬────────────────────────────────┘
+         │               │
+         ▼               ▼
+┌─────────────────────────────────────────────────────────┐
+│               FastAPI Backend (port 8000)               │
+│  /ingest_manual  /urgent  /corrections  /trust          │
+│  /sentiment_summary  /healthz  /token  /docs            │
+└────────┬───────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────┐
+│                    NLP Analysis Engine                  │
+│  Tier 1: VADER (default, fast, offline)                 │
+│  Tier 2: twitter-roberta-base (USE_TRANSFORMER=true)    │
+│  Tier 3: MuRIL / IndicBERT  (USE_INDIC_MODEL=true)      │
+└────────┬───────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────┐
+│              SQLite / PostgreSQL (SQLAlchemy)           │
+│  channels │ feedback │ feedback_processing              │
+│  trust_snapshots                                        │
+└────────┬───────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────┐
+│            Streamlit Dashboard (port 8501)              │
+│  Sentiment trend │ Trust Score │ Urgent feed            │
+│  Correction requests │ Export CSV                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## ⚙️ Features
 
-✅ Collect regional news feedback via Twitter/X APIs
+- **Multi-channel ingestion** — Twitter/X API v2 + manual REST endpoint (WhatsApp/YouTube on roadmap)
+- **Three-tier NLP** — VADER → RoBERTa → MuRIL, progressively richer with env flags
+- **Correction request detection** — keyword + pattern matching in English and Hindi transliteration
+- **Audience Trust Score (ATS)** — `(positive − negative − corrections) / total`, rolling window, −1 to +1
+- **Urgency scoring** — multi-signal (sentiment + correction flag + viral keywords), 1–10 scale
+- **Indic language support** — auto language detection via `langdetect`, MuRIL model for 10 Indic languages
+- **FastAPI backend** — automatic `/docs` (Swagger UI), Pydantic validation, async-ready
+- **JWT authentication** — optional (AUTH_ENABLED=true), token endpoint included
+- **Rate limiting** — 60 req/min on ingest endpoints via slowapi
+- **Real test suite** — 20+ tests covering analysis, API round-trips, ETL deduplication
+- **Docker + Compose** — non-root user, healthcheck, PostgreSQL-ready volume config
 
-✅ Store structured feedback using SQLAlchemy + SQLite
-
-✅ Perform sentiment & urgency analysis (VADER NLP)
-
-✅ RESTful Flask backend APIs
-
-✅ Streamlit dashboard for visualization
-
-✅ Optional Dockerized environment
-
-✅ CI-ready with GitHub Actions
+---
 
 ## 🧰 Tech Stack
 
-```
-Layer Technology
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.11, FastAPI, Uvicorn |
+| NLP | NLTK VADER, HuggingFace Transformers, langdetect |
+| Database | SQLite (dev) / PostgreSQL (prod) via SQLAlchemy 2.0 |
+| Dashboard | Streamlit 1.35, Altair |
+| Auth | python-jose (JWT) |
+| Rate limiting | slowapi |
+| Testing | pytest, pytest-cov, httpx TestClient |
+| CI/CD | GitHub Actions |
+| Deployment | Docker, Docker Compose |
 
-Backend Python (Flask)
+---
 
-NLP/ML NLTK (VADER), scikit-learn
+## 🚀 Quick start
 
-Database SQLite (upgradeable to MySQL/PostgreSQL)
+### 1. Clone & install
 
-Frontend Streamlit
-
-External APIs Twitter/X API v2
-
-CI/CD GitHub Actions
-
-Deployment Docker, Docker Compose
-```
-
-## 🧩 Folder Structure
-```
-regional_feedback_full/
-│
-├── app/
-│ ├── main.py # Flask API server
-│ ├── twitter_etl.py # Fetch feedback from Twitter/X
-│ ├── analysis.py # NLP-based sentiment and correction detection
-│ ├── database.py # SQLAlchemy models and DB initialization
-│
-├── dashboard/
-│ └── streamlit_app.py # Streamlit dashboard
-│
-├── tests/ # Unit tests
-|
-├── .github/workflows/ci.yml # GitHub Actions workflow
-├── docker-compose.yml # Multi-service (API + dashboard)
-├── Dockerfile
-├── requirements.txt
-├── .env.example
-├── LICENSE
-└── README.md
-```
-
-## 🧱 Environment Setup
-
-1️⃣ Clone or Unzip Project
-```
-unzip regional_feedback_full.zip
-cd regional_feedback_full
-```
-
-2️⃣ Create Virtual Environment
-```
-Windows:
-python -m venv venv
-venv\Scripts\activate
-macOS / Linux:
-python3 -m venv venv
-source venv/bin/activate
-```
-
-3️⃣ Install Dependencies
-```
+```bash
+git clone https://github.com/Ashwani4545/regional-newsroom-feedback.git
+cd regional-newsroom-feedback
+python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4️⃣ Configure Environment Variables
-```
-Copy and edit the .env file:
+### 2. Configure
+
+```bash
 cp .env.example .env
-Then open .env and set your credentials:
-TWITTER_BEARER_TOKEN=your_actual_twitter_api_bearer_token
-DATABASE_URL=sqlite:///./data/feedback.db
-API_PORT=8000
+# Edit .env — set TWITTER_BEARER_TOKEN at minimum
 ```
 
-## 🗃️ Database Initialization
-```
-python -m app.database
+### 3. Run
 
-```
+```bash
+# Terminal 1 — API
+uvicorn app.main:app --reload --port 8000
 
-## 🚀 Run the Application
-
-▶️ Run Flask API
-```
-python -m app.main
-Access it at: http://localhost:8000
-```
-
-▶️ Fetch Tweets from Twitter/X
-```
-Open another terminal and run:
-python -m app.twitter_etl --query "#BanarasNews -is:retweet lang:en"
-```
-## 📊 Open Streamlit Dashboard
-```
+# Terminal 2 — Dashboard
 streamlit run dashboard/streamlit_app.py
-Dashboard URL → http://localhost:8501
-You can:
-• View urgent or corrective feedback posts
-• Inspect sentiment analysis results
-• Track new audience reactions
+
+# Terminal 3 — Fetch tweets (optional)
+python -m app.twitter_etl --query "#BanarasNews -is:retweet lang:en" --max_results 50
 ```
 
-## 🐳 Docker Setup (Optional)
-```
-If you prefer running everything in containers:
+API docs: http://localhost:8000/docs  
+Dashboard: http://localhost:8501
+
+---
+
+## 🐳 Docker
+
+```bash
 docker-compose up --build
-This will launch:
-• Flask API: http://localhost:8000
-• Streamlit Dashboard: http://localhost:8501
 ```
 
-## 🧪 Run Tests
+- API: http://localhost:8000
+- Dashboard: http://localhost:8501
+
+---
+
+## 🧠 NLP tiers
+
+### Tier 1 — VADER (default)
+No GPU, no extra install. Good for demos and development.
+
+### Tier 2 — Transformer (recommended for production)
+```bash
+# Uncomment transformers + torch in requirements.txt, then:
+USE_TRANSFORMER=true uvicorn app.main:app
 ```
-pytest -q
+Uses `cardiffnlp/twitter-roberta-base-sentiment-latest` — purpose-built for social media text, ~20 percentage points more accurate than VADER on tweets.
+
+### Tier 3 — Indic languages
+```bash
+USE_INDIC_MODEL=true uvicorn app.main:app
+```
+Uses `google/muril-base-cased` — supports Hindi, Tamil, Telugu, Marathi, Bengali, Gujarati, Kannada, Malayalam, Punjabi, Urdu.
+
+---
+
+## 📊 Audience Trust Score
+
+The ATS is the key differentiator metric — no competitor tool offers this.
+
+```
+ATS = (positive_count − negative_count − correction_count) / total_count
 ```
 
+- **> 0.3** → High trust — audience is largely satisfied
+- **−0.1 to 0.3** → Moderate trust — mixed signals
+- **< −0.1** → Low trust — editorial review recommended
 
-## 🧠 Example API Request
+Accessible via `GET /trust?days=30&channel=twitter`.
+
+---
+
+## 🧪 Tests
+
+```bash
+pytest tests/ -v --cov=app --cov-report=term-missing
 ```
-curl -X POST http://localhost:8000/ingest_manual \
- -H "Content-Type: application/json" \
- -d '{"raw_text": "Please correct the statistics in today’s report", "channel": "email"}'
-```
 
-## 🧾 Future Enhancements
+Covers: sentiment analysis unit tests, API endpoint round-trips, urgency threshold filtering, correction detection, Trust Score calculation, ETL deduplication.
 
-• Advanced topic classification (TF-IDF + Logistic Regression)
+---
 
-• Multi-channel integration (YouTube, Facebook)
+## 🔌 API reference
 
-• Role-based authentication for newsroom staff
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/healthz` | Health check |
+| POST | `/token` | Get JWT token |
+| POST | `/ingest_manual` | Submit feedback |
+| GET | `/urgent` | High-urgency feedback |
+| GET | `/corrections` | Correction requests only |
+| GET | `/sentiment_summary` | Breakdown for N days |
+| GET | `/trust` | Audience Trust Score |
+| GET | `/docs` | Swagger UI |
 
-• Data visualization enhancements (word clouds, timelines)
+---
 
+## 🗺️ Roadmap
 
-## 🧑‍💻 Maintainer
-```
-Developed by: Ashwani Pandey
-Tech Stack: Python · Flask · SQLAlchemy · Streamlit · Docker · Twitter API
-```
+- [ ] Celery + Redis async ETL scheduling
+- [ ] BERTopic topic clustering (`/topics` endpoint)
+- [ ] WhatsApp Business API ingestion
+- [ ] Journalist-level correction routing (Slack webhook)
+- [ ] Alembic migrations (replace `create_all`)
+- [ ] PostgreSQL full-text search on feedback
+- [ ] Article URL ingestion — extract text, match corrections to claims
+
+---
+
+## 🧑‍💻 Author
+
+**Ashwani Pandey**  
+[GitHub: Ashwani4545](https://github.com/Ashwani4545)  
+Stack: Python · FastAPI · SQLAlchemy · Streamlit · HuggingFace · Docker
