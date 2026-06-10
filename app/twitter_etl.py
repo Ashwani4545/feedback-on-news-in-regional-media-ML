@@ -18,13 +18,13 @@ from datetime import datetime
 
 from sqlalchemy.exc import IntegrityError
 
-from app.database import engine, SessionLocal, Channel, Feedback, FeedbackProcessing
+from app.database import SessionLocal, Channel, Feedback, FeedbackProcessing
 from app.analysis import analyze_text
 
 logger = logging.getLogger(__name__)
 
 BEARER_TOKEN = os.environ.get('TWITTER_BEARER_TOKEN')
-TWITTER_API  = 'https://api.twitter.com/2/tweets/search/recent'
+TWITTER_API = 'https://api.twitter.com/2/tweets/search/recent'
 
 
 def fetch_tweets(query: str, max_results: int = 10) -> list:
@@ -37,14 +37,15 @@ def fetch_tweets(query: str, max_results: int = 10) -> list:
         return []
 
     headers = {'Authorization': f'Bearer {BEARER_TOKEN}'}
-    params  = {
-        'query':        query,
-        'max_results':  max(10, min(max_results, 100)),  # API min is 10
+    params = {
+        'query': query,
+        'max_results': max(10, min(max_results, 100)),  # API min is 10
         'tweet.fields': 'created_at,author_id,lang',
     }
 
     try:
-        r = requests.get(TWITTER_API, headers=headers, params=params, timeout=30)
+        r = requests.get(TWITTER_API, headers=headers,
+                         params=params, timeout=30)
         if r.status_code == 401:
             logger.error("Twitter 401: Bearer token invalid or expired.")
             return []
@@ -84,40 +85,42 @@ def insert_tweets(tweets: list) -> dict:
         channel_id = ch.channel_id
 
         for t in tweets:
-            tweet_id  = t.get('id')
-            text      = t.get('text', '')
-            lang      = t.get('lang', 'en')
-            created   = t.get('created_at')
+            tweet_id = t.get('id')
+            text = t.get('text', '')
+            lang = t.get('lang', 'en')
+            created = t.get('created_at')
 
             # Parse timestamp safely
             received_at = datetime.utcnow()
             if created:
                 try:
-                    received_at = datetime.fromisoformat(created.replace('Z', '+00:00'))
+                    received_at = datetime.fromisoformat(
+                        created.replace('Z', '+00:00'))
                 except ValueError:
                     pass
 
             try:
                 fb = Feedback(
-                    channel_id   = channel_id,
-                    raw_text     = text,
-                    raw_metadata = json.dumps({'tweet_id': tweet_id, 'author_id': t.get('author_id')}),
-                    received_at  = received_at,
-                    language     = lang,
-                    tweet_id     = tweet_id,   # unique constraint prevents duplicates
+                    channel_id=channel_id,
+                    raw_text=text,
+                    raw_metadata=json.dumps(
+                        {'tweet_id': tweet_id, 'author_id': t.get('author_id')}),
+                    received_at=received_at,
+                    language=lang,
+                    tweet_id=tweet_id,   # unique constraint prevents duplicates
                 )
                 db.add(fb)
                 db.flush()  # get fb.feedback_id — no RETURNING needed
 
                 # Fix: analysis was completely missing in original
                 ana = analyze_text(text, language=lang)
-                fp  = FeedbackProcessing(
-                    feedback_id         = fb.feedback_id,
-                    sentiment_score     = ana['sentiment_score'],
-                    sentiment_label     = ana['sentiment_label'],
-                    urgency             = ana['urgency'],
-                    correction_suggested = ana['correction_suggested'],
-                    nlp_metadata        = json.dumps(ana),
+                fp = FeedbackProcessing(
+                    feedback_id=fb.feedback_id,
+                    sentiment_score=ana['sentiment_score'],
+                    sentiment_label=ana['sentiment_label'],
+                    urgency=ana['urgency'],
+                    correction_suggested=ana['correction_suggested'],
+                    nlp_metadata=json.dumps(ana),
                 )
                 db.add(fp)
                 db.commit()
@@ -135,7 +138,8 @@ def insert_tweets(tweets: list) -> dict:
     finally:
         db.close()
 
-    logger.info(f"ETL done — inserted={inserted} skipped={skipped} errors={errors}")
+    logger.info(
+        f"ETL done — inserted={inserted} skipped={skipped} errors={errors}")
     return {"inserted": inserted, "skipped": skipped, "errors": errors}
 
 
@@ -150,11 +154,12 @@ def run_etl(query: str, max_results: int = 50) -> dict:
 
 
 if __name__ == '__main__':
-    import sys
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser(description="Twitter ETL for newsroom feedback")
-    parser.add_argument('--query',       required=True, help='Twitter search query')
+    parser = argparse.ArgumentParser(
+        description="Twitter ETL for newsroom feedback")
+    parser.add_argument('--query', required=True,
+                        help='Twitter search query')
     parser.add_argument('--max_results', type=int, default=50)
     args = parser.parse_args()
 

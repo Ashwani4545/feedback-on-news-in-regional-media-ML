@@ -36,20 +36,20 @@ except ImportError:
     JWT_AVAILABLE = False
     logging.warning("python-jose not installed — JWT auth disabled")
 
-from app.database import init_db, SessionLocal, Feedback, FeedbackProcessing, Channel, TrustSnapshot
+from app.database import init_db, SessionLocal, Feedback, FeedbackProcessing, Channel
 from app.analysis import analyze_text
 
 logger = logging.getLogger(__name__)
 
-SECRET_KEY  = os.environ.get("JWT_SECRET", "change-me-in-production")
-ALGORITHM   = "HS256"
+SECRET_KEY = os.environ.get("JWT_SECRET", "change-me-in-production")
+ALGORITHM = "HS256"
 AUTH_ENABLED = os.environ.get("AUTH_ENABLED", "false").lower() == "true"
 
-# ── Rate limiter ───────────────────────────────────────────────────────────────
+# ── Rate limiter ────────────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address)
 
 
-# ── App factory with lifespan ─────────────────────────────────────────────────
+# ── App factory with lifespan ───────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
@@ -72,7 +72,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── DB session dependency ─────────────────────────────────────────────────────
+# ── DB session dependency ───────────────────────────────────────────────
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -81,29 +83,35 @@ def get_db():
         db.close()
 
 
-# ── Auth ───────────────────────────────────────────────────────────────────────
+# ── Auth ────────────────────────────────────────────────────────────────
 bearer_scheme = HTTPBearer(auto_error=False)
 
-def verify_token(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
+
+def verify_token(
+        credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)):
     if not AUTH_ENABLED:
         return {"sub": "anon"}
     if not JWT_AVAILABLE:
         return {"sub": "anon"}
     if credentials is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token")
     try:
-        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(credentials.credentials,
+                             SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 
 def create_token(sub: str, expires_minutes: int = 60 * 24) -> str:
     expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
-    return jwt.encode({"sub": sub, "exp": expire}, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode({"sub": sub, "exp": expire},
+                      SECRET_KEY, algorithm=ALGORITHM)
 
 
-# ── Pydantic schemas ───────────────────────────────────────────────────────────
+# ── Pydantic schemas ────────────────────────────────────────────────────
 class IngestRequest(BaseModel):
     raw_text: str
     channel: str = "email"
@@ -115,7 +123,7 @@ class TokenRequest(BaseModel):
     password: str
 
 
-# ── Helper ─────────────────────────────────────────────────────────────────────
+# ── Helper ──────────────────────────────────────────────────────────────
 def _get_or_create_channel(db: Session, name: str) -> int:
     ch = db.query(Channel).filter(Channel.name == name).first()
     if not ch:
@@ -125,8 +133,13 @@ def _get_or_create_channel(db: Session, name: str) -> int:
     return ch.channel_id
 
 
-def _save_feedback_and_analysis(db: Session, channel_id: int, raw_text: str,
-                                 language: str, metadata: dict = None, tweet_id: str = None):
+def _save_feedback_and_analysis(
+        db: Session,
+        channel_id: int,
+        raw_text: str,
+        language: str,
+        metadata: dict = None,
+        tweet_id: str = None):
     fb = Feedback(
         channel_id=channel_id,
         raw_text=raw_text,
@@ -151,7 +164,7 @@ def _save_feedback_and_analysis(db: Session, channel_id: int, raw_text: str,
     return fb.feedback_id, ana
 
 
-# ── Routes ─────────────────────────────────────────────────────────────────────
+# ── Routes ──────────────────────────────────────────────────────────────
 
 @app.get("/healthz", tags=["ops"])
 def health():
@@ -168,7 +181,10 @@ def login(body: TokenRequest):
     DEMO_PASS = os.environ.get("DEMO_PASS", "newsroom123")
     if body.username != DEMO_USER or body.password != DEMO_PASS:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"access_token": create_token(body.username), "token_type": "bearer"}
+    return {
+        "access_token": create_token(
+            body.username),
+        "token_type": "bearer"}
 
 
 @app.post("/ingest_manual", tags=["ingest"])
@@ -196,26 +212,23 @@ def urgent(threshold: int = 7, limit: int = 50,
            db: Session = Depends(get_db),
            _token=Depends(verify_token)):
     rows = (
-        db.query(Feedback, FeedbackProcessing)
-        .join(FeedbackProcessing, FeedbackProcessing.feedback_id == Feedback.feedback_id)
-        .filter(FeedbackProcessing.urgency >= threshold)
-        .order_by(FeedbackProcessing.urgency.desc())
-        .limit(limit)
-        .all()
-    )
-    return [
-        {
-            "feedback_id":        fb.feedback_id,
-            "channel":            fb.channel_id,
-            "raw_text":           fb.raw_text,
-            "received_at":        fb.received_at.isoformat() if fb.received_at else None,
-            "sentiment":          fp.sentiment_label,
-            "urgency":            fp.urgency,
-            "correction_suggested": fp.correction_suggested,
-            "language":           fb.language,
-        }
-        for fb, fp in rows
-    ]
+        db.query(
+            Feedback,
+            FeedbackProcessing) .join(
+            FeedbackProcessing,
+            FeedbackProcessing.feedback_id == Feedback.feedback_id) .filter(
+                FeedbackProcessing.urgency >= threshold) .order_by(
+                    FeedbackProcessing.urgency.desc()) .limit(limit) .all())
+    return [{"feedback_id": fb.feedback_id,
+             "channel": fb.channel_id,
+             "raw_text": fb.raw_text,
+             "received_at": fb.received_at.isoformat() if fb.received_at else None,
+             "sentiment": fp.sentiment_label,
+             "urgency": fp.urgency,
+             "correction_suggested": fp.correction_suggested,
+             "language": fb.language,
+             } for fb,
+            fp in rows]
 
 
 @app.get("/corrections", tags=["insights"])
@@ -224,20 +237,20 @@ def corrections(limit: int = 50,
                 _token=Depends(verify_token)):
     """All feedback flagged as correction requests."""
     rows = (
-        db.query(Feedback, FeedbackProcessing)
-        .join(FeedbackProcessing, FeedbackProcessing.feedback_id == Feedback.feedback_id)
-        .filter(FeedbackProcessing.correction_suggested == True)
-        .order_by(Feedback.received_at.desc())
-        .limit(limit)
-        .all()
-    )
+        db.query(
+            Feedback,
+            FeedbackProcessing) .join(
+            FeedbackProcessing,
+            FeedbackProcessing.feedback_id == Feedback.feedback_id) .filter(
+                FeedbackProcessing.correction_suggested) .order_by(
+                    Feedback.received_at.desc()) .limit(limit) .all())
     return [
         {
             "feedback_id": fb.feedback_id,
-            "raw_text":    fb.raw_text,
+            "raw_text": fb.raw_text,
             "received_at": fb.received_at.isoformat() if fb.received_at else None,
-            "urgency":     fp.urgency,
-            "language":    fb.language,
+            "urgency": fp.urgency,
+            "language": fb.language,
         }
         for fb, fp in rows
     ]
@@ -245,8 +258,8 @@ def corrections(limit: int = 50,
 
 @app.get("/sentiment_summary", tags=["insights"])
 def sentiment_summary(days: int = 7,
-                       db: Session = Depends(get_db),
-                       _token=Depends(verify_token)):
+                      db: Session = Depends(get_db),
+                      _token=Depends(verify_token)):
     """Sentiment breakdown for the last N days."""
     since = datetime.utcnow() - timedelta(days=days)
     rows = (
@@ -257,10 +270,15 @@ def sentiment_summary(days: int = 7,
     )
     total = len(rows)
     if total == 0:
-        return {"total": 0, "positive": 0, "negative": 0, "neutral": 0, "corrections": 0}
-    pos  = sum(1 for r in rows if r.sentiment_label == 'positive')
-    neg  = sum(1 for r in rows if r.sentiment_label == 'negative')
-    neu  = sum(1 for r in rows if r.sentiment_label == 'neutral')
+        return {
+            "total": 0,
+            "positive": 0,
+            "negative": 0,
+            "neutral": 0,
+            "corrections": 0}
+    pos = sum(1 for r in rows if r.sentiment_label == 'positive')
+    neg = sum(1 for r in rows if r.sentiment_label == 'negative')
+    neu = sum(1 for r in rows if r.sentiment_label == 'neutral')
     corr = sum(1 for r in rows if r.correction_suggested)
     return {
         "total": total,
@@ -287,10 +305,12 @@ def trust_score(channel: str = None, days: int = 30,
     """
     since = datetime.utcnow() - timedelta(days=days)
     q = (
-        db.query(Feedback, FeedbackProcessing)
-        .join(FeedbackProcessing, FeedbackProcessing.feedback_id == Feedback.feedback_id)
-        .filter(Feedback.received_at >= since)
-    )
+        db.query(
+            Feedback,
+            FeedbackProcessing) .join(
+            FeedbackProcessing,
+            FeedbackProcessing.feedback_id == Feedback.feedback_id) .filter(
+                Feedback.received_at >= since))
     if channel:
         ch = db.query(Channel).filter(Channel.name == channel).first()
         if ch:
@@ -301,22 +321,22 @@ def trust_score(channel: str = None, days: int = 30,
     if total == 0:
         return {"trust_score": None, "total": 0, "message": "No data in range"}
 
-    pos  = sum(1 for _, fp in rows if fp.sentiment_label == 'positive')
-    neg  = sum(1 for _, fp in rows if fp.sentiment_label == 'negative')
+    pos = sum(1 for _, fp in rows if fp.sentiment_label == 'positive')
+    neg = sum(1 for _, fp in rows if fp.sentiment_label == 'negative')
     corr = sum(1 for _, fp in rows if fp.correction_suggested)
 
     ats = round((pos - neg - corr) / total, 4)
     label = "high" if ats > 0.3 else "low" if ats < -0.1 else "moderate"
 
     return {
-        "trust_score":   ats,
-        "trust_level":   label,
-        "total":         total,
-        "positive":      pos,
-        "negative":      neg,
-        "corrections":   corr,
-        "period_days":   days,
-        "channel":       channel or "all",
+        "trust_score": ats,
+        "trust_level": label,
+        "total": total,
+        "positive": pos,
+        "negative": neg,
+        "corrections": corr,
+        "period_days": days,
+        "channel": channel or "all",
     }
 
 

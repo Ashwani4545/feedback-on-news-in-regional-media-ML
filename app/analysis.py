@@ -13,20 +13,19 @@ Set env vars:
   USE_INDIC_MODEL=true   — enable MuRIL for Indic languages
 """
 
+from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
 import os
 import re
-import json
 import logging
 
 logger = logging.getLogger(__name__)
 
-# ── Tier 1: VADER (always available as fallback) ──────────────────────────────
-import nltk
+# ── Tier 1: VADER (always available as fallback) ────────────────────────
 nltk.download('vader_lexicon', quiet=True)
-from nltk.sentiment import SentimentIntensityAnalyzer
 _vader = SentimentIntensityAnalyzer()
 
-# ── Tier 2: Transformer (optional) ────────────────────────────────────────────
+# ── Tier 2: Transformer (optional) ──────────────────────────────────────
 _transformer_pipeline = None
 USE_TRANSFORMER = os.environ.get('USE_TRANSFORMER', 'false').lower() == 'true'
 
@@ -43,7 +42,7 @@ if USE_TRANSFORMER:
     except Exception as e:
         logger.warning(f'Transformer load failed, falling back to VADER: {e}')
 
-# ── Tier 3: Indic model (optional) ────────────────────────────────────────────
+# ── Tier 3: Indic model (optional) ──────────────────────────────────────
 _indic_pipeline = None
 USE_INDIC = os.environ.get('USE_INDIC_MODEL', 'false').lower() == 'true'
 
@@ -60,7 +59,7 @@ if USE_INDIC:
     except Exception as e:
         logger.warning(f'Indic model load failed: {e}')
 
-# ── Indic language detection ──────────────────────────────────────────────────
+# ── Indic language detection ────────────────────────────────────────────
 try:
     from langdetect import detect as _langdetect
     _langdetect_available = True
@@ -69,7 +68,7 @@ except ImportError:
 
 INDIC_LANGS = {'hi', 'ta', 'te', 'ml', 'mr', 'bn', 'gu', 'kn', 'pa', 'ur'}
 
-# ── Correction keywords (English + Indic transliterated) ──────────────────────
+# ── Correction keywords (English + Indic transliterated) ────────────────
 CORRECTION_PATTERNS = [
     # English
     r'\bwrong\b', r'\bincorrect\b', r'\berror\b', r'\bmistake\b',
@@ -85,8 +84,8 @@ _correction_re = re.compile('|'.join(CORRECTION_PATTERNS), re.IGNORECASE)
 
 URGENCY_SIGNALS = {
     'correction': 5,   # +5 if correction flagged
-    'negative':   2,   # +2 if sentiment is negative
-    'viral_kw':   2,   # +2 for urgency keywords
+    'negative': 2,   # +2 if sentiment is negative
+    'viral_kw': 2,   # +2 for urgency keywords
 }
 VIRAL_KW_RE = re.compile(
     r'\bbreaking\b|\burgent\b|\bscandal\b|\bshocking\b|\bexclusive\b',
@@ -105,7 +104,8 @@ def _detect_language(text: str) -> str:
 
 def _sentiment_transformer(text: str, lang: str) -> dict:
     """Use transformer model; falls back to VADER on error."""
-    pipeline = _indic_pipeline if (lang in INDIC_LANGS and _indic_pipeline) else _transformer_pipeline
+    pipeline = _indic_pipeline if (
+        lang in INDIC_LANGS and _indic_pipeline) else _transformer_pipeline
     if pipeline is None:
         return _sentiment_vader(text)
     try:
@@ -185,9 +185,9 @@ def analyze_text(text: str, language: str = None) -> dict:
     else:
         result = _sentiment_vader(text)
 
-    compound     = result['compound']
-    label        = result['label']
-    model_used   = result.get('model', 'vader')
+    compound = result['compound']
+    label = result['label']
+    model_used = result.get('model', 'vader')
 
     # Correction detection
     correction = bool(_correction_re.search(text))
@@ -203,11 +203,11 @@ def analyze_text(text: str, language: str = None) -> dict:
     urgency = min(urgency, 10)
 
     return {
-        'sentiment_score':     round(compound, 4),
-        'sentiment_label':     label,
-        'urgency':             urgency,
+        'sentiment_score': round(compound, 4),
+        'sentiment_label': label,
+        'urgency': urgency,
         'correction_suggested': correction,
-        'language':            lang,
-        'model_used':          model_used,
-        'meta':                result.get('raw', {}),
+        'language': lang,
+        'model_used': model_used,
+        'meta': result.get('raw', {}),
     }
