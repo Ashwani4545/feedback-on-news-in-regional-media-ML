@@ -12,10 +12,6 @@ Covers:
   - Language detection pass-through
 """
 
-import app.database as _db_module
-from app.main import app, get_db
-from app.database import init_db
-from starlette.testclient import TestClient
 import os
 import tempfile
 
@@ -27,6 +23,11 @@ TEST_DB_URL = f"sqlite:///{_tmp_db.name}"
 os.environ["DATABASE_URL"] = TEST_DB_URL
 os.environ["AUTH_ENABLED"] = "false"
 os.environ["USE_TRANSFORMER"] = "false"
+
+import app.database as _db_module  # noqa: E402
+from app.main import app, get_db  # noqa: E402
+from app.database import init_db  # noqa: E402
+from starlette.testclient import TestClient  # noqa: E402
 
 
 # Create all tables in the shared test DB file
