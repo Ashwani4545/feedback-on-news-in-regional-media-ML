@@ -217,7 +217,7 @@ with tab1:
                             "language", "received_at", "raw_text"]
             display_cols = [c for c in display_cols if c in df.columns]
             st.dataframe(
-                df[display_cols].style.applymap(colour_urgency, subset=["urgency"]),
+                df[display_cols].style.map(colour_urgency, subset=["urgency"]),
                 use_container_width=True,
                 hide_index=True,
             )
