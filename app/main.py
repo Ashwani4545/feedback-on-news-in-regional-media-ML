@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import FastAPI, Depends, HTTPException, status, Request
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -164,7 +165,11 @@ def _save_feedback_and_analysis(
     return fb.feedback_id, ana
 
 
-# ── Routes ──────────────────────────────────────────────────────────────
+@app.get("/", response_class=FileResponse, tags=["portal"])
+def read_index():
+    """Serve the public feedback webpage."""
+    return FileResponse("static/index.html")
+
 
 @app.get("/healthz", tags=["ops"])
 def health():
