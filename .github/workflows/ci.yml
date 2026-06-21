@@ -63,7 +63,7 @@ jobs:
         run: |
           docker run -d --name test_container \
             -e DATABASE_URL="sqlite:///./data/feedback.db" \
-            -e AUTH_ENABLED="false" \
+            -e AUTH_ENABLED="true" \
             -p 8000:8000 \
             newsroom-feedback:${{ github.sha }}
           sleep 8
