@@ -1,6 +1,6 @@
 # 📰 Regional Newsroom Feedback System v2.0
 
-         [![CI](https://github.com/Ashwani4545/regional-newsroom-feedback/actions/workflows/ci.yml/badge.svg)](https://github.com/Ashwani4545/regional-newsroom-feedback/actions)
+[![CI](https://github.com/Ashwani4545/regional-newsroom-feedback/actions/workflows/ci.yml/badge.svg)](https://github.com/Ashwani4545/regional-newsroom-feedback/actions)
 [![Python](https://img.shields.io/badge/python-3.11-blue)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)](https://fastapi.tiangolo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
